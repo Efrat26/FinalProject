@@ -39,10 +39,10 @@
 
     <PreferenceCategory android:key="privacy_settings" android:title="@string/recipient_preferences__privacy">
 
-        <Preference android:key="pref_key_recipient_identity"
+        <!--Preference android:key="pref_key_recipient_identity"
                     android:title="@string/recipient_preferences__view_safety_number"
                     android:persistent="false"
-                    android:enabled="false"/>
+                    android:enabled="false"/-->
 
         <Preference android:key="pref_key_recipient_block"
                     android:title="@string/recipient_preferences__block"
