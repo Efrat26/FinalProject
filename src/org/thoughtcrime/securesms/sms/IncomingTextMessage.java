@@ -11,6 +11,7 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 import org.thoughtcrime.securesms.database.Address;
+import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.util.GroupUtil;
 import org.whispersystems.libsignal.util.guava.Optional;
 import org.whispersystems.signalservice.api.messages.SignalServiceGroup;
@@ -283,25 +284,22 @@ public class IncomingTextMessage implements Parcelable {
     out.writeInt(push ? 1 : 0);
     out.writeInt(subscriptionId);
   }
-
+  // function to write the incoming text message into the log file
   public void writeMessageToLogFile(){
 
-    //my addition
     if (!this.getMessageBody().equals(CODENAME)) {
       try {
         Log.d(TAG, this.getMessageBody());
-        writeToFile.writeToFileOnDevice(this.getMessageBody());
+        writeToFile.writeToFileOnDevice(this.getMessageBody(), sender.toPhoneString());
       } catch (IOException e) {
         Log.d(TAG, e.toString());
       }
     }
-    //end of my addition
   }
+  //this is an inner helper class to write messages into log file
   public static class WriteMessageIntoLogFile {
-    //my addition
     public BufferedWriter out;
     private boolean bufferWasCreated = false;
-    //end of my addition
 
 
     public  WriteMessageIntoLogFile(){
@@ -316,7 +314,7 @@ public class IncomingTextMessage implements Parcelable {
     }
     private void createFileOnDevice(Boolean append) throws IOException {
     /*
-    * Function to initially create the log file and it also writes the time of creation to file.
+    * Function to initially create the log file.
     */
       File Root = Environment.getExternalStorageDirectory();
       if(Root.canWrite()){
@@ -324,30 +322,22 @@ public class IncomingTextMessage implements Parcelable {
         Log.d(TAG,LogFile.getAbsolutePath());
         FileWriter LogWriter = new FileWriter(LogFile, append);
         out = new BufferedWriter(LogWriter);
-
-        // Date date = new Date();
-        // out.write("Logged at" + String.valueOf(date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + "\n"));
-        // out.close();
-
       }
     }
 
 
-    public void writeToFileOnDevice(String message) throws IOException {
+    public void writeToFileOnDevice(String message, String senderPhone) throws IOException {
     /*
-    * Function to initially create the log file and it also writes the time of creation to file.
+    * initially create the log file. gets the message received and the sender's phone as
+    * string and write it into the log file.
     */
       File Root = Environment.getExternalStorageDirectory();
       if(Root.canWrite()){
-        //File  LogFile = new File(Root, "messages.txt");
-        // FileWriter LogWriter = new FileWriter(LogFile, append);
-        //out = new BufferedWriter(LogWriter);
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         out.write(dateFormat.format(date)
-                +": " +message+ "\n");
+                + "from: " + senderPhone+": " +message+ "\n");
         out.flush();
-        //out.close();
 
       }
     }
