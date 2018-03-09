@@ -74,8 +74,15 @@ public class InviteActivity extends PassphraseRequiredActionBarActivity implemen
     smsSendButton     = ViewUtil.findById(this, R.id.send_sms_button);
     heart             = ViewUtil.findById(this, R.id.heart);
     contactsFragment  = (ContactSelectionListFragment)getSupportFragmentManager().findFragmentById(R.id.contact_selection_list_fragment);
+    //check the experiment version - if it's the original (=0) then put the original link,
+    // if not, put a link to our experiment
+    if (((ApplicationContext) this.getApplication()).getExperimentVersion() !=  0){
+     // inviteText.setText(getString(R.string.InviteActivity_lets_switch_to_signal, "https://sgnl.link/1KpeYmF"));
+        inviteText.setText("hello world");
 
-    inviteText.setText(getString(R.string.InviteActivity_lets_switch_to_signal, "https://sgnl.link/1KpeYmF"));
+    } else {
+      inviteText.setText(getString(R.string.InviteActivity_lets_switch_to_signal, "https://sgnl.link/1KpeYmF"));
+    }
     updateSmsButtonText();
 
     if (VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) {
