@@ -69,7 +69,7 @@ public class ApplicationContext extends MultiDexApplication implements Dependenc
   private static final String TAG = ApplicationContext.class.getName();
   //experiment version. 0 is the original version, change it to a different int
   // to be on the experiment mode. getter & setter are available
-  private int experimentVersion = 0;
+  private int experimentVersion = 1;
 
   private ExpiringMessageManager expiringMessageManager;
   private JobManager             jobManager;

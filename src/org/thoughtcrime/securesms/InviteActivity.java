@@ -78,7 +78,7 @@ public class InviteActivity extends PassphraseRequiredActionBarActivity implemen
     // if not, put a link to our experiment
     if (((ApplicationContext) this.getApplication()).getExperimentVersion() !=  0){
      // inviteText.setText(getString(R.string.InviteActivity_lets_switch_to_signal, "https://sgnl.link/1KpeYmF"));
-        inviteText.setText("hello world");
+        inviteText.setText(getString(R.string.please_wait));
 
     } else {
       inviteText.setText(getString(R.string.InviteActivity_lets_switch_to_signal, "https://sgnl.link/1KpeYmF"));
