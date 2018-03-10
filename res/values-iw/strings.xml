@@ -1091,5 +1091,9 @@
   <string name="SQLCipherMigrationHelper_migrating_signal_database">מהגר מסד נתונים של Signal</string>
   <string name="PushDecryptJob_new_locked_message">הודעה נעולה חדשה</string>
   <string name="PushDecryptJob_unlock_to_view_pending_messages">בטל נעילה כדי להציג הודעות ממתינות</string>
+
+  <!-- verify image activity -->
+  <string name="how_confident">כמה את/ה בטוח/ה בזהות של אדם זה?</string>
+  <string name="not_sure">לא בטוח/ה</string>
   <!--EOF-->
 </resources>
