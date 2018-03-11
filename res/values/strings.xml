@@ -1326,6 +1326,10 @@
     <!-- verify image activity -->
     <string name="how_confident">How confident are you about this person\'s identity?</string>
     <string name="not_sure">not sure</string>
+
+    <!-- certification -->
+    <string name="marked_safety">You have marked your safety number with </string>
+    <string name="not_marked_safety">You haven\'t marked you safety number with </string>
     <!-- EOF -->
 
 </resources>

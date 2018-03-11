@@ -35,8 +35,8 @@
         android:layout_width="111dp"
         android:layout_height="88dp"
         app:srcCompat="@drawable/background_pattern"
-        tools:layout_editor_absoluteX="120dp"
-        tools:layout_editor_absoluteY="156dp" />
+        tools:layout_editor_absoluteX="137dp"
+        tools:layout_editor_absoluteY="211dp" />
 
     <TextView
         android:id="@+id/textView"

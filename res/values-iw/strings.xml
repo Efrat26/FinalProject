@@ -1095,5 +1095,8 @@
   <!-- verify image activity -->
   <string name="how_confident">כמה את/ה בטוח/ה בזהות של אדם זה?</string>
   <string name="not_sure">לא בטוח/ה</string>
+  <!-- certification -->
+  <string name="marked_safety">אישרת את הוודאות שלך עם </string>
+  <string name="not_marked_safety">עדיין אישרת את הוודאות שלך עם </string>
   <!--EOF-->
 </resources>
